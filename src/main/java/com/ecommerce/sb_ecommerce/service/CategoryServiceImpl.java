@@ -11,9 +11,7 @@ import java.util.List;
 
 @Service
 public class CategoryServiceImpl implements CategoryService{
-//    private List<Category> categoryList = new ArrayList<>();
-    private Long autoID = 1L;
-    
+
     @Autowired
     private CategoryRepository categoryRepository;
 

@@ -18,6 +18,6 @@ public class Category {
     private Long categoryId;
 
     @NotBlank(message = "It cannot left blank")
-    @Size(min = 3, message = "Category Name Atleast contain 3 characters")
+    @Size(min = 3, message = "Category Name At least contain 3 characters")
     private String categoryName;
 }

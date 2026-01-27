@@ -6,14 +6,13 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 public class CategoryController {
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
@@ -32,23 +31,15 @@ public class CategoryController {
     }
     @DeleteMapping("/admin/categories/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId){
-        try {
             String status = categoryService.deleteCategory(categoryId);
             return new ResponseEntity<>(status, HttpStatus.OK);
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<>(e.getReason(), e.getStatusCode());
-        }
     }
 
     @PutMapping("/public/categories/{categoryId}")
-    public Object updateCategorie(@RequestBody Category category,
-                                  @PathVariable Long categoryId){
-        try {
+    public ResponseEntity<Category> updateCategories(@Valid @RequestBody Category category,
+                                                     @PathVariable Long categoryId){
             Category updatedCategory = categoryService.updateCategory(category, categoryId);
             return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<>(e.getReason(), e.getStatusCode());
-        }
     }
 
 }

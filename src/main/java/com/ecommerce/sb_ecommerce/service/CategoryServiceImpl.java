@@ -24,9 +24,9 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public CategoryResponse getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
-        if (categories.size() == 0) {
-            throw new APIException("Categories are empty");
-        }
+//        if (categories.size() == 0) {
+//            throw new APIException("Categories are empty");
+//        }
         List<CategoryDTO> categoryDTOS = categories.stream()
                 .map(category -> modelMapper.map(category, CategoryDTO.class))
                 .toList();
@@ -47,11 +47,11 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public String deleteCategory(Long categoryId) {
+    public CategoryDTO deleteCategory(Long categoryId) {
             Category category = categoryRepository.findById(categoryId)
                             .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
            categoryRepository.delete(category);
-           return "Successfully deleted the category with Category Id" + categoryId;
+           return modelMapper.map(category, CategoryDTO.class);
     }
 
     @Override

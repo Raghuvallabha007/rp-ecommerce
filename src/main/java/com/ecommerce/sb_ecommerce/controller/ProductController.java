@@ -2,6 +2,7 @@ package com.ecommerce.sb_ecommerce.controller;
 
 import com.ecommerce.sb_ecommerce.model.Product;
 import com.ecommerce.sb_ecommerce.payload.ProductDTO;
+import com.ecommerce.sb_ecommerce.payload.ProductResponse;
 import com.ecommerce.sb_ecommerce.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +24,33 @@ public class ProductController {
         log.info("Adding product to category {} with id {}", categoryId, product);
         ProductDTO productDTO = productService.addProduct(categoryId, product);
         return new ResponseEntity<>(productDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/public/products")
+    public ResponseEntity<ProductResponse> getAllProducts() {
+        log.info("Getting all products");
+        ProductResponse productResponse = productService.getAllProducts();
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/public/categories/{categoryId}/product")
+    public ResponseEntity<ProductResponse> getAllProductsByCategory(@PathVariable Long categoryId) {
+        log.info("Getting all products by category with id {}", categoryId);
+        ProductResponse productResponse = productService.searchByCategory(categoryId);
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/public/products/keyword/{keyword}")
+    public ResponseEntity<ProductResponse> getAllProductsByKeyword(@PathVariable String keyword) {
+        log.info("Getting all products by keyword {}", keyword);
+        ProductResponse productResponse = productService.searchProductByKeyword(keyword);
+        return new ResponseEntity<>(productResponse, HttpStatus.FOUND);
+    }
+
+    @PutMapping("/admin/products/{productId}")
+    public ResponseEntity<ProductDTO> updateProductById(@PathVariable Long productId,
+                                                             @RequestBody Product product) {
+        ProductDTO productResponseDTO = productService.updateProduct(productId, product);
+        return new ResponseEntity<>(productResponseDTO, HttpStatus.OK);
     }
 }

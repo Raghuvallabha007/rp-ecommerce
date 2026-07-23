@@ -1,6 +1,5 @@
 package com.ecommerce.sb_ecommerce.controller;
 
-import com.ecommerce.sb_ecommerce.model.Product;
 import com.ecommerce.sb_ecommerce.payload.ProductDTO;
 import com.ecommerce.sb_ecommerce.payload.ProductResponse;
 import com.ecommerce.sb_ecommerce.service.ProductService;
@@ -19,11 +18,11 @@ public class ProductController {
     ProductService productService;
 
     @PostMapping("/admin/categories/{categoryId}/product")
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody Product product,
+    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO,
                                                  @PathVariable Long categoryId) {
-        log.info("Adding product to category {} with id {}", categoryId, product);
-        ProductDTO productDTO = productService.addProduct(categoryId, product);
-        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+        log.info("Adding product to category {} with id {}", categoryId, productDTO);
+        ProductDTO savedProductDTO = productService.addProduct(categoryId, productDTO);
+        return new ResponseEntity<>(savedProductDTO, HttpStatus.OK);
     }
 
     @GetMapping("/public/products")
@@ -49,8 +48,15 @@ public class ProductController {
 
     @PutMapping("/admin/products/{productId}")
     public ResponseEntity<ProductDTO> updateProductById(@PathVariable Long productId,
-                                                             @RequestBody Product product) {
-        ProductDTO productResponseDTO = productService.updateProduct(productId, product);
+                                                             @RequestBody ProductDTO ProductDTO) {
+        ProductDTO productResponseDTO = productService.updateProduct(productId, ProductDTO);
         return new ResponseEntity<>(productResponseDTO, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/admin/products/{productId}")
+    public ResponseEntity<ProductDTO> deleteProductById(@PathVariable Long productId) {
+        log.info("Deleting product with id {}", productId);
+        ProductDTO deletedProduct = productService.deleteProduct(productId);
+        return new ResponseEntity<>(deletedProduct, HttpStatus.OK);
     }
 }

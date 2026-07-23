@@ -29,8 +29,9 @@ public class ProductServiceImpl implements ProductService {
     private ModelMapper modelMapper;
 
     @Override
-    public ProductDTO addProduct(Long categoryId, Product product) {
+    public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
         Category category = getCategoryByIdOrThrow(categoryId);
+        Product product = modelMapper.map(productDTO, Product.class);
         product.setImage("test.png");
         product.setCategory(category);
         double specialPrice =
@@ -76,9 +77,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO updateProduct(Long productId, Product product) {
+    public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
         log.info("Update product in service layer with id {}", productId);
-        Product getProductFromDb = productRepository.findById(productId).get();
+        Product product = modelMapper.map(productDTO, Product.class);
+        Product getProductFromDb = getProductByIdOrThrow(productId);
         getProductFromDb.setPrice(product.getPrice());
         getProductFromDb.setSpecialPrice(product.getSpecialPrice());
         getProductFromDb.setProductName(product.getProductName());
@@ -87,6 +89,14 @@ public class ProductServiceImpl implements ProductService {
         getProductFromDb.setDiscount(product.getDiscount());
         Product updatedProduct = productRepository.save(getProductFromDb);
         return modelMapper.map(updatedProduct, ProductDTO.class);
+    }
+
+    @Override
+    public ProductDTO deleteProduct(Long productId) {
+        log.info("Delete product in service layer with id {}", productId);
+        Product getProductFromDb = getProductByIdOrThrow(productId);
+        productRepository.delete(getProductFromDb);
+        return modelMapper.map(getProductFromDb, ProductDTO.class);
     }
 
     private List<ProductDTO> mapToProductDTOs(List<Product> products) {
@@ -103,5 +113,15 @@ public class ProductServiceImpl implements ProductService {
                                 "Category",
                                 "categoryId",
                                 categoryId));
+    }
+
+    private Product getProductByIdOrThrow(Long productId) {
+        log.info("getProductByIdOrThrow method - {} in service layer starts", productId);
+        return productRepository.findById(productId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Product",
+                                "productId",
+                                productId));
     }
 }
